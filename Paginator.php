@@ -88,7 +88,10 @@ class Paginator {
         echo '$row_start: '.$this->_row_start.' | '; //total rows
         echo '$limit: '.$this->_limit.' | '; //total rows per query
         echo '$start: '.$start.' | '; //start printing links from
+        if($this->_page > 4) { $start = $start + 3;  }
+
         echo '$end: '.$end.' | '; //end printing links at
+        if($this->_page > 4) { $end = $end - 3;  }
         echo '$last: '.$last.' | '; //last page
         echo '$page: '.$this->_page.' | '; //current page
         echo '$links: '.$links.' <br /> '; //links 
