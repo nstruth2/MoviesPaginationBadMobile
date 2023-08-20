@@ -5,14 +5,10 @@
 <?php
 
 require ('Paginator.php');
+require ('database.php');
 
-$host = 'localhost';
-$user = '';
-$pass = '';
-$db = 'movies';
 
-$mysqli = new mysqli($host,$user,$pass,$db); 
-
+$mysqli = new mysqli($host,$user,$pass,$db);
 //DO NOT limit this query with LIMIT keyword, or...things will break!
 $query = "SELECT * FROM movies";
 
@@ -97,92 +93,94 @@ for ($p = 0; $p < count($results->data); $p++): ?>
             }
 
             ?>
+<div class='row'> 
 
-            <div class='content description'><?= $movie['description'] ?></div>
+                <div class='content description'><?= $movie['description'] ?></div>
 
-            <?php
-            //get directors
-            $result3 = $mysqli->query
-                    ("SELECT directors_id FROM movies_directors WHERE movies_id={$movie['id']}") or
-            die($mysqli->error);
+                <?php
+                //get directors
+                $result3 = $mysqli->query
+                        ("SELECT directors_id FROM movies_directors WHERE movies_id={$movie['id']}") or
+                die($mysqli->error);
 
-            $directors = $result3->fetch_all();
-            $directors = array_column($directors, 0);
+                $directors = $result3->fetch_all();
+                $directors = array_column($directors, 0);
 
-            //get stars
-            $result4 = $mysqli->query
-                    ("SELECT stars_id FROM movies_stars WHERE movies_id={$movie['id']}") or
-            die($mysqli->error);
+                //get stars
+                $result4 = $mysqli->query
+                        ("SELECT stars_id FROM movies_stars WHERE movies_id={$movie['id']}") or
+                die($mysqli->error);
 
-            $stars = $result4->fetch_all();
-            $stars = array_column($stars, 0);
-            
-            //print_r($directors);
-            //print_r($stars);die;
-            ?>
-
-            <div>
-
-            <?php
-
-            //loop through directors
-            for ($i = 0; $i < count($directors);$i++)
-            {
-                $director = $mysqli->query
-                        ("SELECT name from directors where id = '{$directors[$i]}'")->fetch_assoc();
-                        
-                //if there are more than 1 directors, put letter s insdie $s variable :)
-                $s = count($directors) > 1 ? 's' : '';
+                $stars = $result4->fetch_all();
+                $stars = array_column($stars, 0);
                 
-                //put $s variable at the end of Director, will be plural if multiple directors
-                echo $i == 0 ? "<span class='content yellow'>Director$s: </span>" : ''; 
-                echo "<span class='content text'>".$director['name']."</span>";
-                
-                //not at the end of directors, print comma
-                if ($directors[$i] != end($directors)){
-                    echo ', ';
-                }
-                else {
-                    //at the end of directors, print pipe, but only if there are stars
-                    if (count($stars) > 0) 
-                    {
-                        echo ' | ';
+                //print_r($directors);
+                //print_r($stars);die;
+                ?>
+
+                <div>
+
+                <?php
+
+                //loop through directors
+                for ($i = 0; $i < count($directors);$i++)
+                {
+                    $director = $mysqli->query
+                            ("SELECT name from directors where id = '{$directors[$i]}'")->fetch_assoc();
+                            
+                    //if there are more than 1 directors, put letter s insdie $s variable :)
+                    $s = count($directors) > 1 ? 's' : '';
+                    
+                    //put $s variable at the end of Director, will be plural if multiple directors
+                    echo $i == 0 ? "<span class='content yellow'>Director$s: </span>" : ''; 
+                    echo "<span class='content text'>".$director['name']."</span>";
+                    
+                    //not at the end of directors, print comma
+                    if ($directors[$i] != end($directors)){
+                        echo ', ';
+                    }
+                    else {
+                        //at the end of directors, print pipe, but only if there are stars
+                        if (count($stars) > 0) 
+                        {
+                            echo ' | ';
+                        }
                     }
                 }
-            }
-            ?>
+                ?>
 
-            <?php
+                <?php
 
-            //loop through stars
-            for ($i = 0; $i < count($stars);$i++)
-            {
-            $star = $mysqli->query("SELECT name from stars where id = '{$stars[$i]}'")->fetch_assoc();
-            $s = count($stars) > 1 ? 's' : ''; //same s trick as with directors
-            echo $i == 0 ? "<span class='content yellow'>Star$s: </span>" : ''; 
-            echo "<span>".$star['name']."</span>";
-            echo $stars[$i] != end($stars) ? ', ' : ''; //print comma if not at the end of stars
-            }
-            ?>
-            </div>
+                //loop through stars
+                for ($i = 0; $i < count($stars);$i++)
+                {
+                $star = $mysqli->query("SELECT name from stars where id = '{$stars[$i]}'")->fetch_assoc();
+                $s = count($stars) > 1 ? 's' : ''; //same s trick as with directors
+                echo $i == 0 ? "<span class='content yellow'>Star$s: </span>" : ''; 
+                echo "<span>".$star['name']."</span>";
+                echo $stars[$i] != end($stars) ? ', ' : ''; //print comma if not at the end of stars
+                }
+                ?>
+                </div>
 
-            <div class='bottom'>
-            <?php 
+                <div class='bottom'>
+                <?php 
 
-            //check if votes exists
-            if ($movie['votes']) {
-                echo "<span class='content yellow'>Votes: </span>".number_format($movie['votes']);
-                //if gross exists print pipe after votes
-                //we already know votes exists with if statement above
-                echo $movie['gross'] ? ' | ' : '';
-            }
-            ?>
+                //check if votes exists
+                if ($movie['votes']) {
+                    echo "<span class='content yellow'>Votes: </span>".number_format($movie['votes']);
+                    //if gross exists print pipe after votes
+                    //we already know votes exists with if statement above
+                    echo $movie['gross'] ? ' | ' : '';
+                }
+                ?>
 
-            <span class='content green'>
-            <?= $movie['gross'] ? "<span class='content yellow'>Gross: </span>$".
-                     number_format($movie['gross']) : '' ?>
-            </span>
+                <span class='content green'>
+                <?= $movie['gross'] ? "<span class='content yellow'>Gross: </span>$".
+                         number_format($movie['gross']) : '' ?>
+                </span>
 
+                </div>
             </div>
                 
             </div>
